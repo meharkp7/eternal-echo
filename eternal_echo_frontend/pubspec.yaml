@@ -54,6 +54,11 @@ dev_dependencies:
 flutter:
   assets: 
     - assets/capsule.png
+    - assets/background.png
+    - assets/envelope.png
+    - assets/lock.png
+    - assets/treasure.png
+
   fonts:
     - family: Italianno
       fonts:
