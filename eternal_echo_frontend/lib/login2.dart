@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'otp.dart'; // Import the OTP screen
 
 class Login2Screen extends StatelessWidget {
   const Login2Screen({super.key});
@@ -67,7 +68,14 @@ class Login2Screen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(25),
                             ),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const OtpVerificationScreen(),
+                              ),
+                            );
+                          },
                           child: Text(
                             "Register",
                             style: TextStyle(
