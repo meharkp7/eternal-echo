@@ -46,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   "Eternal-Echo",
                   style: TextStyle(
                     fontFamily: "Italianno",
-                    fontSize: 50,
+                    fontSize: 70,
                     fontWeight: FontWeight.bold,
                     foreground: Paint()
                       ..style = PaintingStyle.stroke
