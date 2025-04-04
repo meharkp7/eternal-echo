@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'timeline.dart';
+import 'settings.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,9 +13,18 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (index == _selectedIndex) return;
+    if (index == 1) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const TimelineScreen()),
+      );
+    } else if (index == 3) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const SettingsScreen()),
+      );
+    }
   }
 
   @override
@@ -29,9 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
             width: double.infinity,
             decoration: const BoxDecoration(
               color: Color(0xFF2E236C),
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(20),
-              ),
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -61,9 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-
           SizedBox(height: screenHeight * 0.03),
-
           Padding(
             padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.08),
             child: Container(
@@ -83,16 +90,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ListTile(
+                  const ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: Colors.grey.shade300,
-                      child: const Icon(Icons.person, color: Colors.black),
+                      backgroundColor: Colors.grey,
+                      child: Icon(Icons.person, color: Colors.black),
                     ),
-                    title: const Text(
-                      "Shreya Saini",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: const Text("6 April 2025"),
+                    title: Text("Shreya Saini", style: TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text("6 April 2025"),
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -134,52 +138,42 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-
           const Spacer(),
+          _buildBottomNavBar(),
+        ],
+      ),
+    );
+  }
 
-          Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFF2E236C),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 5,
-                  spreadRadius: 1,
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-              child: BottomNavigationBar(
-                backgroundColor: Colors.transparent,
-                selectedItemColor: const Color.fromARGB(255, 47, 2, 97),
-                unselectedItemColor: const Color(0xFFBB8FEF),
-                currentIndex: _selectedIndex,
-                onTap: _onItemTapped,
-                elevation: 0,
-                items: const [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.group),
-                    label: '',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.calendar_month),
-                    label: '',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.add_box),
-                    label: '',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.person),
-                    label: '',
-                  ),
-                ],
-              ),
-            ),
+  Widget _buildBottomNavBar() {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF2E236C),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 5,
+            spreadRadius: 1,
           ),
         ],
+      ),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        child: BottomNavigationBar(
+          backgroundColor: Colors.transparent,
+          selectedItemColor: const Color.fromARGB(255, 47, 2, 97),
+          unselectedItemColor: const Color(0xFFBB8FEF),
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          elevation: 0,
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.group), label: ''),
+            BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: ''),
+            BottomNavigationBarItem(icon: Icon(Icons.add_box), label: ''),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
+          ],
+        ),
       ),
     );
   }

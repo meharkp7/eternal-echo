@@ -61,6 +61,7 @@ flutter:
     - assets/icons.png
     - assets/background_light.png
     - assets/capsule_img.png
+    - assets/capsule_glow.png
 
 
 

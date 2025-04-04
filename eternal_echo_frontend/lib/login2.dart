@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'otp.dart'; // Import the OTP screen
-
+import 'otp.dart'; 
 class Login2Screen extends StatelessWidget {
   const Login2Screen({super.key});
 
