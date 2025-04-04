@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'login.dart';
 
 class SliderScreen extends StatefulWidget {
   const SliderScreen({super.key});
@@ -34,12 +36,17 @@ class _SliderScreenState extends State<SliderScreen> {
 
   void _startAutoSlide() {
     Future.delayed(const Duration(seconds: 3), () {
-      if (_pageController.hasClients) {
-        int nextPage = (_currentIndex + 1) % sliderData.length;
+      if (!mounted) return;
+      if (_currentIndex < sliderData.length - 1) {
         _pageController.animateToPage(
-          nextPage,
+          _currentIndex + 1,
           duration: const Duration(milliseconds: 500),
           curve: Curves.easeInOut,
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
         );
       }
     });
@@ -61,7 +68,10 @@ class _SliderScreenState extends State<SliderScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset("assets/background.png", fit: BoxFit.cover),
+            child: Image.asset(
+              "assets/background.png",
+              fit: BoxFit.cover,
+            ),
           ),
           PageView.builder(
             controller: _pageController,
@@ -71,6 +81,31 @@ class _SliderScreenState extends State<SliderScreen> {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Text(
+                        "Eternal-Echo",
+                        style: TextStyle(
+                          fontFamily: "Italianno",
+                          fontSize: screenHeight * 0.08,
+                          foreground: Paint()
+                            ..style = PaintingStyle.stroke
+                            ..strokeWidth = 1.5
+                            ..color = const Color(0xFF7B00D4),
+                        ),
+                      ),
+                      Text(
+                        "Eternal-Echo",
+                        style: TextStyle(
+                          fontFamily: "Italianno",
+                          fontSize: screenHeight * 0.08,
+                          color: const Color(0xFFC084EB),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: screenHeight * 0.04),
                   Image.asset(
                     "assets/capsule.png",
                     height: screenHeight * 0.18,
@@ -78,7 +113,7 @@ class _SliderScreenState extends State<SliderScreen> {
                   SizedBox(height: screenHeight * 0.03),
                   Image.asset(
                     sliderData[index]["icon"]!,
-                    height: screenHeight * 0.15,
+                    height: screenHeight * 0.16,
                   ),
                   SizedBox(height: screenHeight * 0.04),
                   Padding(
@@ -87,8 +122,8 @@ class _SliderScreenState extends State<SliderScreen> {
                       sliderData[index]["text"]!,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: screenHeight * 0.025,
-                        color: Color(0xFFACD9DA),
+                        fontSize: screenHeight * 0.024,
+                        color: const Color(0xFFACD9DA),
                         fontFamily: "Lato",
                         fontWeight: FontWeight.w500,
                       ),

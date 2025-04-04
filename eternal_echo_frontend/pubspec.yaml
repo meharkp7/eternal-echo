@@ -58,11 +58,17 @@ flutter:
     - assets/envelope.png
     - assets/lock.png
     - assets/treasure.png
+    - assets/icons.png
+    - assets/background_light.png
+
 
   fonts:
     - family: Italianno
       fonts:
         - asset: assets/fonts/Italianno.regular.ttf
+    - family: JainiPurva
+      fonts:
+        - asset: assets/fonts/JainiPurva.ttf
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
