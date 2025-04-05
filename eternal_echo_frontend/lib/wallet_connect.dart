@@ -1,5 +1,6 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:walletconnect_dart/walletconnect_dart.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class WalletConnector {
   late WalletConnect connector;
@@ -21,10 +22,18 @@ class WalletConnector {
     if (!connector.connected) {
       session = await connector.createSession(
         onDisplayUri: (uri) async {
-          await launchUrlString(uri, mode: LaunchMode.externalApplication);
+          if (kIsWeb) {
+            // Works only with MetaMask browser extension on web
+            await launchUrl(Uri.parse(uri), mode: LaunchMode.platformDefault);
+          } else {
+            await launchUrl(Uri.parse(uri),
+                mode: LaunchMode.externalApplication);
+          }
         },
       );
     }
-    return session?.accounts.first;
+    return session?.accounts[0];
   }
+
+  bool get isConnected => connector.connected;
 }
