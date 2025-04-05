@@ -1,18 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
-
-import 'package:url_launcher/url_launcher.dart';
-import 'package:walletconnect_dart/walletconnect_dart.dart';
-
 import 'home.dart';
 import 'settings.dart';
+import 'web3_wallet_wrapper.dart';
 
 class CreateScreen extends StatefulWidget {
   const CreateScreen({super.key});
@@ -27,7 +24,7 @@ class _CreateScreenState extends State<CreateScreen> {
   final TextEditingController _unlockTimeController = TextEditingController();
 
   final String rpcUrl = "https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID";
-  final String contractAddress = "YOUR_CONTRACT_ADDRESS";
+  final String contractAddress = "0x7Fb86B4e7fE2cc358a734Cd4F9cD29D3f596a88a";
   late DeployedContract contract;
   late ContractFunction lockFileFunction;
 
@@ -37,10 +34,6 @@ class _CreateScreenState extends State<CreateScreen> {
   String? connectedWalletAddress;
 
   final List<String> fileTypes = ['Image', 'Document', 'Audio', 'Other'];
-
-  late WalletConnect connector;
-  SessionStatus? session;
-
   Duration? _timeLeft;
   Timer? _countdownTimer;
 
@@ -49,16 +42,6 @@ class _CreateScreenState extends State<CreateScreen> {
     super.initState();
     ethClient = Web3Client(rpcUrl, Client());
     loadContract();
-
-    connector = WalletConnect(
-      bridge: 'https://bridge.walletconnect.org',
-      clientMeta: const PeerMeta(
-        name: 'Eternal Echo',
-        description: 'Time capsule with MetaMask + Encryption',
-        url: 'https://eternalecho.app',
-        icons: ['https://walletconnect.org/walletconnect-logo.png'],
-      ),
-    );
   }
 
   Future<void> loadContract() async {
@@ -69,6 +52,22 @@ class _CreateScreenState extends State<CreateScreen> {
       EthereumAddress.fromHex(contractAddress),
     );
     lockFileFunction = contract.function("lockFile");
+  }
+
+  Future<void> connectWallet() async {
+    if (!kIsWeb) return;
+
+    try {
+      await ethRequest({'method': 'eth_requestAccounts'});
+      final address = getSelectedAddress();
+      if (address != null) {
+        setState(() {
+          connectedWalletAddress = address;
+        });
+      }
+    } catch (e) {
+      print("Wallet connection error: $e");
+    }
   }
 
   Future<void> lockFile() async {
@@ -97,21 +96,6 @@ class _CreateScreenState extends State<CreateScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("File locked with CID: $ipfsHash")),
     );
-  }
-
-  Future<void> connectWallet() async {
-    if (!connector.connected) {
-      session = await connector.createSession(
-        onDisplayUri: (uri) async {
-          await launchUrl(Uri.parse(uri), mode: LaunchMode.externalApplication);
-        },
-      );
-    }
-    if (session != null && session!.accounts.isNotEmpty) {
-      setState(() {
-        connectedWalletAddress = session!.accounts[0];
-      });
-    }
   }
 
   void _selectDate(BuildContext context) async {
