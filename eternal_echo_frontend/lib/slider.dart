@@ -24,7 +24,8 @@ class _SliderScreenState extends State<SliderScreen> {
     },
     {
       "icon": "assets/treasure.png",
-      "text": "Preserve your emotions, surprises, and wisdom for the future—forever.",
+      "text":
+          "Preserve your emotions, surprises, and wisdom for the future—forever.",
     },
   ];
 
@@ -35,7 +36,7 @@ class _SliderScreenState extends State<SliderScreen> {
   }
 
   void _startAutoSlide() {
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 7), () {
       if (!mounted) return;
       if (_currentIndex < sliderData.length - 1) {
         _pageController.animateToPage(
@@ -117,7 +118,8 @@ class _SliderScreenState extends State<SliderScreen> {
                   ),
                   SizedBox(height: screenHeight * 0.04),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
                     child: Text(
                       sliderData[index]["text"]!,
                       textAlign: TextAlign.center,
@@ -140,7 +142,8 @@ class _SliderScreenState extends State<SliderScreen> {
                         height: 10,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: _currentIndex == i ? Colors.purple : Colors.grey,
+                          color:
+                              _currentIndex == i ? Colors.purple : Colors.grey,
                         ),
                       ),
                     ),
