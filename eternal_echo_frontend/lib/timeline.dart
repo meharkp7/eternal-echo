@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
 import 'settings.dart';
+import 'create.dart'; // ✅ Added this line
 
 class TimelineScreen extends StatefulWidget {
   const TimelineScreen({super.key});
@@ -19,6 +20,11 @@ class _TimelineScreenState extends State<TimelineScreen> {
         context,
         MaterialPageRoute(builder: (context) => const SettingsScreen()),
       );
+    } else if (index == 2) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const CreateScreen()),
+      );
     } else {
       Navigator.pushReplacement(
         context,
@@ -30,7 +36,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
   void _showOverlay() {
     showDialog(
       context: context,
-      barrierDismissible: true, // Allows tapping outside to close
+      barrierDismissible: true,
       builder: (context) {
         return AnimatedOverlay();
       },
@@ -68,7 +74,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
                   "Mehar’s 18th Birthday",
                   "Ready to be Unlocked",
                   screenWidth,
-                  onTap: _showOverlay, // Add tap function
+                  onTap: _showOverlay,
                 ),
                 _buildTimelineCard(
                   "3 January 2026, 2:30AM",
@@ -91,7 +97,6 @@ class _TimelineScreenState extends State<TimelineScreen> {
               ],
             ),
           ),
-          
           Padding(
             padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
             child: ElevatedButton(
@@ -100,7 +105,9 @@ class _TimelineScreenState extends State<TimelineScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02, horizontal: screenWidth * 0.3),
+                padding: EdgeInsets.symmetric(
+                    vertical: screenHeight * 0.02,
+                    horizontal: screenWidth * 0.3),
               ),
               onPressed: () {},
               child: const Text(
@@ -112,7 +119,6 @@ class _TimelineScreenState extends State<TimelineScreen> {
               ),
             ),
           ),
-          
           _buildBottomNavigationBar(),
         ],
       ),
@@ -120,16 +126,18 @@ class _TimelineScreenState extends State<TimelineScreen> {
   }
 
   Widget _buildTimelineCard(
-      String date, String topic, String? subtitle, double screenWidth, {VoidCallback? onTap}) {
+      String date, String topic, String? subtitle, double screenWidth,
+      {VoidCallback? onTap}) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06, vertical: 10),
+      padding:
+          EdgeInsets.symmetric(horizontal: screenWidth * 0.06, vertical: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Column(
             children: [
-              Image.asset("assets/capsule.png", height: 40), 
-              Container(width: 2, height: 80, color: Colors.black), 
+              Image.asset("assets/capsule.png", height: 40),
+              Container(width: 2, height: 80, color: Colors.black),
             ],
           ),
           const SizedBox(width: 15),
@@ -224,22 +232,11 @@ class _TimelineScreenState extends State<TimelineScreen> {
           onTap: _onItemTapped,
           elevation: 0,
           items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.group), label: ''),
             BottomNavigationBarItem(
-              icon: Icon(Icons.group),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_box),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: '',
-            ),
+                icon: Icon(Icons.calendar_month), label: ''),
+            BottomNavigationBarItem(icon: Icon(Icons.add_box), label: ''),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
           ],
         ),
       ),
@@ -252,7 +249,8 @@ class AnimatedOverlay extends StatefulWidget {
   _AnimatedOverlayState createState() => _AnimatedOverlayState();
 }
 
-class _AnimatedOverlayState extends State<AnimatedOverlay> with SingleTickerProviderStateMixin {
+class _AnimatedOverlayState extends State<AnimatedOverlay>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -266,7 +264,8 @@ class _AnimatedOverlayState extends State<AnimatedOverlay> with SingleTickerProv
     );
 
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(_controller);
-    _slideAnimation = Tween<Offset>(begin: Offset(0, 1), end: Offset.zero).animate(_controller);
+    _slideAnimation = Tween<Offset>(begin: Offset(0, 1), end: Offset.zero)
+        .animate(_controller);
 
     _controller.forward();
   }
@@ -284,7 +283,7 @@ class _AnimatedOverlayState extends State<AnimatedOverlay> with SingleTickerProv
       child: SlideTransition(
         position: _slideAnimation,
         child: Center(
-          child: Image.asset("assets/capsule_glow.png", width: 300), // Time Capsule Image
+          child: Image.asset("assets/capsule_glow.png", width: 300),
         ),
       ),
     );
