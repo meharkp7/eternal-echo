@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -39,6 +40,9 @@ class _CreateScreenState extends State<CreateScreen> {
 
   late WalletConnect connector;
   SessionStatus? session;
+
+  Duration? _timeLeft;
+  Timer? _countdownTimer;
 
   @override
   void initState() {
@@ -124,7 +128,39 @@ class _CreateScreenState extends State<CreateScreen> {
             (_selectedDate!.millisecondsSinceEpoch / 1000).round();
         _unlockTimeController.text = unixTimestamp.toString();
       });
+      _startCountdownTimer();
     }
+  }
+
+  void _startCountdownTimer() {
+    if (_selectedDate == null) return;
+
+    final unlockTime = DateTime.fromMillisecondsSinceEpoch(
+      int.parse(_unlockTimeController.text) * 1000,
+    );
+
+    _countdownTimer?.cancel();
+
+    _countdownTimer = Timer.periodic(Duration(seconds: 1), (_) {
+      final now = DateTime.now();
+      if (unlockTime.isBefore(now)) {
+        setState(() => _timeLeft = Duration.zero);
+        _countdownTimer?.cancel();
+      } else {
+        setState(() {
+          _timeLeft = unlockTime.difference(now);
+        });
+      }
+    });
+  }
+
+  String _formatDuration(Duration duration) {
+    final days = duration.inDays;
+    final hours = duration.inHours % 24;
+    final minutes = duration.inMinutes % 60;
+    final seconds = duration.inSeconds % 60;
+
+    return "${days}d ${hours}h ${minutes}m ${seconds}s";
   }
 
   void _onItemTapped(int index) {
@@ -140,6 +176,12 @@ class _CreateScreenState extends State<CreateScreen> {
         MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    _countdownTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -248,6 +290,17 @@ class _CreateScreenState extends State<CreateScreen> {
                 Text(
                   "Selected Date: ${_selectedDate!.toLocal().toString().split(' ')[0]}",
                   style: TextStyle(fontSize: 16),
+                ),
+              if (_timeLeft != null && _timeLeft != Duration.zero)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    "Time left: ${_formatDuration(_timeLeft!)}",
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepPurple),
+                  ),
                 ),
               const SizedBox(height: 20),
               ElevatedButton(

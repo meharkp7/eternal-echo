@@ -41,6 +41,8 @@ dependencies:
   omni_datetime_picker: ^2.0.7
   url_launcher: ^6.2.5
   qr_flutter: ^4.0.0
+  flutter_dotenv: ^5.0.2
+
 
 
 
@@ -76,7 +78,7 @@ flutter:
     - assets/background_light.png
     - assets/capsule_img.png
     - assets/capsule_glow.png
-
+    - assets/FileVault.json
 
 
   fonts:
