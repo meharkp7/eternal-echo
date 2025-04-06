@@ -12,6 +12,11 @@ import 'settings.dart';
 import 'web3_wallet_wrapper.dart';
 import 'timeline.dart';
 
+const String PINATA_API_KEY = 'dda9599d59af1305eacc';
+const String PINATA_SECRET_API_KEY =
+    '5c2b53790dc7ec30e916dda56ff39700002392b25795ce9225f60581b5498ac7';
+const String CONTRACT_ADDRESS = '0xCb8011498BB28B5F9bAE531cC4F15bb9de40b8b0';
+
 class CreateScreen extends StatefulWidget {
   const CreateScreen({super.key});
 
@@ -25,8 +30,8 @@ class _CreateScreenState extends State<CreateScreen> {
   final TextEditingController _unlockTimeController = TextEditingController();
   final TextEditingController _capsuleNameController = TextEditingController();
 
-  final String rpcUrl = "https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID";
-  final String contractAddress = "0x7Fb86B4e7fE2cc358a734Cd4F9cD29D3f596a88a";
+  final String rpcUrl = "http://127.0.0.1:8545/";
+  final String contractAddress = CONTRACT_ADDRESS;
   late DeployedContract contract;
   late ContractFunction lockFileFunction;
 
@@ -103,6 +108,7 @@ class _CreateScreenState extends State<CreateScreen> {
   }
 
   Future<void> lockFile() async {
+    print("lockFile function called!");
     if (_unlockTimeController.text.isEmpty ||
         int.tryParse(_unlockTimeController.text) == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -111,8 +117,14 @@ class _CreateScreenState extends State<CreateScreen> {
       return;
     }
 
-    final uri = Uri.parse('https://ipfs.infura.io:5001/api/v0/add');
+    final uri = Uri.parse('https://api.pinata.cloud/pinning/pinFileToIPFS');
     final request = http.MultipartRequest('POST', uri);
+
+    const String pinataApiKey = "dda9599d59af1305eacc";
+    const String pinataSecretApiKey =
+        "5c2b53790dc7ec30e916dda56ff39700002392b25795ce9225f60581b5498ac7";
+    request.headers['pinata_api_key'] = pinataApiKey;
+    request.headers['pinata_secret_api_key'] = pinataSecretApiKey;
 
     if (kIsWeb) {
       request.files.add(http.MultipartFile.fromBytes('file', fileBytes!,
@@ -122,45 +134,68 @@ class _CreateScreenState extends State<CreateScreen> {
           .add(await http.MultipartFile.fromPath('file', selectedFilePath!));
     }
 
-    final response = await request.send();
-    final resBody = await response.stream.bytesToString();
-    final ipfsHash = jsonDecode(resBody)['Hash'];
+    try {
+      final response = await request.send();
+      final resBody = await response.stream.bytesToString();
+      print("Pinata Response: $resBody");
+      final Map<String, dynamic> jsonResponse = jsonDecode(resBody);
+      final String? ipfsHash = jsonResponse['IpfsHash'];
+      print("IPFS Hash: $ipfsHash");
 
-    final parsedUnlockTime = int.parse(_unlockTimeController.text);
+      if (ipfsHash == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text("Failed to get IPFS hash from Pinata response.")),
+        );
+        return;
+      }
 
-    final unlockDateTime =
-        DateTime.fromMillisecondsSinceEpoch(parsedUnlockTime * 1000);
+      final parsedUnlockTime = int.parse(_unlockTimeController.text);
 
-    final credentials = EthPrivateKey.fromHex(
-        "38a880d6bb43a44b4a980404ac1a0fa5ffb8ce5dfb6b3d44d037e5a6f8a81df2");
+      final unlockDateTime =
+          DateTime.fromMillisecondsSinceEpoch(parsedUnlockTime * 1000);
 
-    await ethClient.sendTransaction(
-      credentials,
-      Transaction.callContract(
-        contract: contract,
-        function: lockFileFunction,
-        parameters: [ipfsHash, BigInt.from(parsedUnlockTime)],
-      ),
-      chainId: 11155111,
-    );
+      final credentials = EthPrivateKey.fromHex(
+          "38a880d6bb43a44b4a980404ac1a0fa5ffb8ce5dfb6b3d44d037e5a6f8a81df2");
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("File locked with CID: $ipfsHash")),
-    );
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TimelineScreen(
-          newCapsule: {
-            "date":
-                "${unlockDateTime.day} ${unlockDateTime.month} ${unlockDateTime.year}, ${unlockDateTime.hour}:${unlockDateTime.minute}${unlockDateTime.hour < 12 ? 'AM' : 'PM'}",
-            "topic": _capsuleNameController.text,
-            "subtitle": "Ready to be Unlocked",
-          },
+      print("Sending transaction...");
+      await ethClient.sendTransaction(
+        credentials,
+        Transaction.callContract(
+          contract: contract,
+          function: lockFileFunction,
+          parameters: [
+            Uint8List.fromList(utf8.encode(ipfsHash!)),
+            BigInt.from(parsedUnlockTime),
+          ],
         ),
-      ),
-    );
+        chainId: 31337,
+      );
+      print("Transaction sent successfully!");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("File locked with CID: $ipfsHash")),
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TimelineScreen(
+            newCapsule: {
+              "date":
+                  "${unlockDateTime.day} ${unlockDateTime.month} ${unlockDateTime.year}, ${unlockDateTime.hour}:${unlockDateTime.minute}${unlockDateTime.hour < 12 ? 'AM' : 'PM'}",
+              "topic": _capsuleNameController.text,
+              "subtitle": "Ready to be Unlocked",
+            },
+          ),
+        ),
+      );
+    } catch (e) {
+      print("Error in lockFile: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("An error occurred while locking the file: $e")),
+      );
+    }
   }
 
   void _selectDateTime(BuildContext context) async {
@@ -359,8 +394,9 @@ class _CreateScreenState extends State<CreateScreen> {
               const SizedBox(height: 12),
               if (_selectedDate != null && _selectedTime != null)
                 Text(
-                    "Selected: ${_selectedDate!.toLocal().toString().split(' ')[0]} @ ${_selectedTime!.format(context)}",
-                    style: TextStyle(fontSize: 16)),
+                  "Selected: ${_selectedDate!.toLocal().toString().split(' ')[0]} @ ${_selectedTime!.format(context)}",
+                  style: TextStyle(fontSize: 14),
+                ),
               if (_timeLeft != null && _timeLeft != Duration.zero)
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0),
@@ -371,11 +407,22 @@ class _CreateScreenState extends State<CreateScreen> {
                           color: Colors.deepPurple)),
                 ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: isLockEnabled ? lockFile : null,
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF2E236C)),
-                child: const Text("Lock Time Capsule"),
+              GestureDetector(
+                onTap: isLockEnabled
+                    ? () {
+                        print("GestureDetector tapped, isLockEnabled is true");
+                        lockFile();
+                      }
+                    : () {
+                        print("GestureDetector tapped, isLockEnabled is false");
+                      },
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF2E236C),
+                  ),
+                  onPressed: null, // Set onPressed to null here
+                  child: const Text("Lock Time Capsule"),
+                ),
               ),
             ],
           ),

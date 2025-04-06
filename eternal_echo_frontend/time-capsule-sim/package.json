@@ -1,22 +1,14 @@
 {
-  "name": "eternal_echo_frontend",
+  "name": "time-capsule-sim",
   "version": "1.0.0",
-  "description": "A new Flutter project.",
   "main": "index.js",
-  "directories": {
-    "lib": "lib",
-    "test": "test"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "multer": "^1.4.5-lts.2",
-    "openai": "^4.91.1"
-  },
+  "description": "",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "hardhat": "^2.22.19"
