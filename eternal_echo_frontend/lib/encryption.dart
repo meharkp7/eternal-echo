@@ -3,7 +3,8 @@ import 'dart:typed_data';
 import 'package:encrypt/encrypt.dart' as encrypt;
 
 class AESHelper {
-  static final _key = encrypt.Key.fromUtf8('my32lengthsupersecretnooneknows1'); // 32 chars
+  static final _key =
+      encrypt.Key.fromUtf8('my32lengthsupersecretnooneknows1'); // 32 chars
   static final _iv = encrypt.IV.fromLength(16);
 
   static Uint8List encryptFile(Uint8List fileBytes) {

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'home.dart';
 import 'settings.dart';
-import 'create.dart'; // ✅ Added this line
+import 'create.dart';
 
 class TimelineScreen extends StatefulWidget {
-  const TimelineScreen({super.key});
+  final Map<String, String>? newCapsule;
+
+  const TimelineScreen({super.key, this.newCapsule});
 
   @override
   State<TimelineScreen> createState() => _TimelineScreenState();
@@ -12,6 +14,37 @@ class TimelineScreen extends StatefulWidget {
 
 class _TimelineScreenState extends State<TimelineScreen> {
   int _selectedIndex = 1;
+
+  List<Map<String, String>> capsules = [
+    {
+      "date": "16 April 2025, 7:30PM",
+      "topic": "Mehar’s 18th Birthday",
+      "subtitle": "Ready to be Unlocked"
+    },
+    {
+      "date": "3 January 2026, 2:30AM",
+      "topic": "To Kritika, enjoy your day",
+      "subtitle": ""
+    },
+    {
+      "date": "13 April 2029, 7:00PM",
+      "topic": "4 years to the trip to Trampoline Park",
+      "subtitle": "(Enjoy the pictures)"
+    },
+    {
+      "date": "23 July 2029, 9:00PM",
+      "topic": "To my future self…",
+      "subtitle": ""
+    },
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.newCapsule != null) {
+      capsules.insert(0, widget.newCapsule!);
+    }
+  }
 
   void _onItemTapped(int index) {
     if (index == 1) return;
@@ -66,35 +99,19 @@ class _TimelineScreenState extends State<TimelineScreen> {
       body: Column(
         children: [
           Expanded(
-            child: ListView(
+            child: ListView.builder(
               padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
-              children: [
-                _buildTimelineCard(
-                  "16 April 2025, 7:30PM",
-                  "Mehar’s 18th Birthday",
-                  "Ready to be Unlocked",
+              itemCount: capsules.length,
+              itemBuilder: (context, index) {
+                final item = capsules[index];
+                return _buildTimelineCard(
+                  item['date']!,
+                  item['topic']!,
+                  item['subtitle'] ?? '',
                   screenWidth,
                   onTap: _showOverlay,
-                ),
-                _buildTimelineCard(
-                  "3 January 2026, 2:30AM",
-                  "To Kritika, enjoy your day",
-                  "",
-                  screenWidth,
-                ),
-                _buildTimelineCard(
-                  "13 April 2029, 7:00PM",
-                  "4 years to the trip to Trampoline Park",
-                  "(Enjoy the pictures)",
-                  screenWidth,
-                ),
-                _buildTimelineCard(
-                  "23 July 2029, 9:00PM",
-                  "To my future self…",
-                  "",
-                  screenWidth,
-                ),
-              ],
+                );
+              },
             ),
           ),
           Padding(
@@ -106,8 +123,9 @@ class _TimelineScreenState extends State<TimelineScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 padding: EdgeInsets.symmetric(
-                    vertical: screenHeight * 0.02,
-                    horizontal: screenWidth * 0.3),
+                  vertical: screenHeight * 0.02,
+                  horizontal: screenWidth * 0.3,
+                ),
               ),
               onPressed: () {},
               child: const Text(
