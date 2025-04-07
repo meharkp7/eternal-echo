@@ -30,7 +30,7 @@ class _CreateScreenState extends State<CreateScreen> {
   final TextEditingController _unlockTimeController = TextEditingController();
   final TextEditingController _capsuleNameController = TextEditingController();
 
-  final String rpcUrl = "http://127.0.0.1:8545/";
+  static const String rpcUrl = "http://127.0.0.1:8545/";
   final String contractAddress = CONTRACT_ADDRESS;
   late DeployedContract contract;
   late ContractFunction lockFileFunction;
@@ -165,7 +165,7 @@ class _CreateScreenState extends State<CreateScreen> {
           contract: contract,
           function: lockFileFunction,
           parameters: [
-            Uint8List.fromList(utf8.encode(ipfsHash!)),
+            ipfsHash,
             BigInt.from(parsedUnlockTime),
           ],
         ),
