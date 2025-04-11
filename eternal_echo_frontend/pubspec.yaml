@@ -43,6 +43,7 @@ dependencies:
   qr_flutter: ^4.0.0
   flutter_dotenv: ^5.0.2
   js: ^0.6.5
+  audioplayers: ^5.2.1
 
 
 
@@ -80,6 +81,7 @@ flutter:
     - assets/capsule_img.png
     - assets/capsule_glow.png
     - assets/FileVault.json
+    - assets/sound/beep.mp3
 
 
   fonts:

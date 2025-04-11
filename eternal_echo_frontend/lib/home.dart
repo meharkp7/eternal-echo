@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'timeline.dart';
 import 'settings.dart';
+import 'bid.dart'; // Import bid.dart to navigate to it
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -95,14 +96,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       backgroundColor: Colors.grey,
                       child: Icon(Icons.person, color: Colors.black),
                     ),
-                    title: Text("Shreya Saini", style: TextStyle(fontWeight: FontWeight.bold)),
+                    title: Text("Shreya Saini",
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: Text("6 April 2025"),
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
-                      "Capsule unlocked!",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      "Time left for bidding: 53:36:29",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
                   SizedBox(height: screenHeight * 0.015),
@@ -123,9 +126,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             borderRadius: BorderRadius.circular(25),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const BidScreen()),
+                          );
+                        },
                         child: Text(
-                          "Open Now",
+                          "Bid On It!",
                           style: TextStyle(
                             fontSize: screenHeight * 0.025,
                             color: Colors.white,
@@ -169,7 +178,8 @@ class _HomeScreenState extends State<HomeScreen> {
           elevation: 0,
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.group), label: ''),
-            BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: ''),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.calendar_month), label: ''),
             BottomNavigationBarItem(icon: Icon(Icons.add_box), label: ''),
             BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
           ],
