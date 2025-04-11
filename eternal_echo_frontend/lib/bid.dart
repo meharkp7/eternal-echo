@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:math';
+import 'home.dart';
+import 'create.dart';
+import 'settings.dart';
 
 class BidScreen extends StatefulWidget {
   const BidScreen({super.key});
@@ -89,7 +92,28 @@ class _BidScreenState extends State<BidScreen> with TickerProviderStateMixin {
   }
 
   void _onItemTapped(int index) {
-    setState(() => _selectedIndex = index);
+    if (index == _selectedIndex) return;
+
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()));
+        break;
+      case 1:
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const SettingsScreen()));
+        break;
+      case 2:
+        break;
+      case 3:
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const CreateScreen()));
+        break;
+    }
   }
 
   void _submitBid() {

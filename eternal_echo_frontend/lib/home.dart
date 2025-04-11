@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'timeline.dart';
 import 'settings.dart';
-import 'bid.dart'; // Import bid.dart to navigate to it
+import 'bid.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,17 +15,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onItemTapped(int index) {
     if (index == _selectedIndex) return;
-    if (index == 1) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const TimelineScreen()),
-      );
-    } else if (index == 3) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const SettingsScreen()),
-      );
+
+    Widget nextPage;
+    switch (index) {
+      case 0:
+        nextPage = const HomeScreen();
+        break;
+      case 1:
+        nextPage = const TimelineScreen();
+        break;
+      case 2:
+        nextPage = const BidScreen();
+        break;
+      case 3:
+        nextPage = const SettingsScreen();
+        break;
+      default:
+        return;
     }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => nextPage),
+    );
   }
 
   @override
